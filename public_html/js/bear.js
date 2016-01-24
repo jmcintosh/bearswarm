@@ -10,12 +10,12 @@ var FRAMERATE = 5;
 
 // adjustable factors to control swarm behavior
 var omega = 1.0;
-var phi_p = 0.5;
+var phi_p = 1.0;
 var phi_g = 1.0;
 
 var g_best = {fitness:0,x: 0, y: 0};
 
-var Bear = function (game,x,y) {
+var Bear = function (game,x,y,group) {
     this.p_best = {fitness:fitness(x,y),x:x,y:y};
     
     this.sprite = game.add.sprite(x, y, 'bear');
@@ -38,7 +38,7 @@ var Bear = function (game,x,y) {
     this.sprite.body.velocity.x = signx * Math.random()*MAX_VELOCITY;
     this.sprite.body.velocity.y = signy * Math.random()*MAX_VELOCITY;
     
-    sprite_group.add(this.sprite);
+    group.add(this.sprite);
 
     this.update();
     
@@ -46,11 +46,11 @@ var Bear = function (game,x,y) {
 Bear.prototype.constructor = Bear;
 
 
-Bear.prototype.update = function(){
+Bear.prototype.update = function(target){
     // determine fitness
     var cx = this.sprite.x;
     var cy = this.sprite.y;
-    var f = fitness(cx,cy);
+    var f = fitness(cx,cy,target);
     
     if(f > this.p_best.fitness){
         this.p_best.fitness = f;
@@ -72,13 +72,12 @@ Bear.prototype.update = function(){
     var rgx = Math.random();
     var rgy = Math.random();
     
-    if(g_best.fitness !== 0){
-        vx = omega*vx + phi_p*rpx*(this.p_best.x - cx) + phi_g*rgx*(g_best.x - cx);
-        vy = omega*vy + phi_p*rpy*(this.p_best.y - cy) + phi_g*rgy*(g_best.y - cy);
-    }else{
-        vx = omega*vx + phi_p*rpx*(this.p_best.x - cx);
-        vy = omega*vy + phi_p*rpy*(this.p_best.y - cy);
+    if(g_best.fitness === 0){
+        rgx = 0;
+        rgy = 0;
     }
+    vx = omega*vx + phi_p*rpx*(this.p_best.x - cx) + phi_g*rgx*(g_best.x - cx);
+    vy = omega*vy + phi_p*rpy*(this.p_best.y - cy) + phi_g*rgy*(g_best.y - cy);
     
     if(vx > 0){
         this.sprite.body.velocity.x = Math.min(vx,MAX_VELOCITY);
@@ -123,11 +122,11 @@ Bear.prototype.resetPersonal = function () {
 };
 
 
-function fitness(x,y) {
+function fitness(x,y,target) {
     if( target === undefined ){
         return 0;
     }else{
-        var r = Math.pow(x-target.sprite.x,2) + Math.pow(y-target.sprite.y,2);
+        var r = Math.pow(x-target.getX(),2) + Math.pow(y-target.getY(),2);
         var i = r === 0 ? Infinity : 1/r;
         return i;
     }

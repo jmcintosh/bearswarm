@@ -1,7 +1,7 @@
 "use strict";
 
 
-var Target = function(game,x,y) {
+var Target = function(game,x,y,group) {
     
     var sprite_name = "guy";
     if(Math.random() > 0.5){
@@ -21,7 +21,15 @@ var Target = function(game,x,y) {
     this.sprite.body.setSize(18,26,0,20);
     
     
-    sprite_group.add(this.sprite);
+    group.add(this.sprite);
+};
+
+Target.prototype.getX = function() {
+    return this.sprite.x;
+};
+
+Target.prototype.getY = function() {
+    return this.sprite.y;
 };
 
 Target.prototype.destroy = function() {

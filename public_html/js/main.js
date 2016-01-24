@@ -38,11 +38,11 @@ function create() {
     for(var i = 0; i < 30; i++){
         var x = Math.random()*WIDTH;
         var y = Math.random()*HEIGHT;
-        bears.push( new Bear(this,x,y) );
+        bears.push( new Bear(this,x,y,sprite_group) );
     }
     
     function updateBears() {
-        bears.forEach(function(bear){bear.update();});
+        bears.forEach(function(bear){bear.update(target);});
     }
     
     window.setInterval(updateBears, 200);
@@ -61,7 +61,7 @@ function handleClick() {
     bears.forEach(function(bear){bear.resetPersonal();});
     
     if(target === undefined ){
-        target = new Target(game,game.input.x,game.input.y);
+        target = new Target(game,game.input.x,game.input.y,sprite_group);
     }else {
         target.destroy();
     }
